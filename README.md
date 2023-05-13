@@ -1,3 +1,4 @@
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/Yyz_ETFO)
 # ECE 208 Homework 6: Simulating Sequences Under GTR
 In this homework assignment, we will study one of the robust models of DNA evolution: the [General Time Reversible (GTR) model](https://en.wikipedia.org/wiki/Models_of_DNA_evolution#GTR_model_(Tavar%C3%A9_1986)).<sup>1</sup> In this assignment, we will ignore insertions and deletions (indels), and we will assume that sequences only differ due to substitutions. We will assume that the evolutionary processes of the positions of a sequences are **identical and independently distributed (i.i.d.)**.
 
