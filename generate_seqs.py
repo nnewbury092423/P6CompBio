@@ -62,7 +62,7 @@ def evolve(tree, root_seq, gtr_probs, gtr_rates):
     d = 0
     for i in range(len(gtr_probs)):
          d = d - gtr_probs[i] * R[i][i]
-    row = 0;
+    row = 0
     Rnorm = R/abs(d)
 
     tot = dict()
