@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+import numpy as np
+import scipy as sp
+
 ERROR_GTR_PARAMS_FILE = "Invalid GTR parameters file"
 ERROR_ROOT_SEQ = "Invalid root sequence. Must be path to FASTA file or integer"
 
@@ -10,8 +13,24 @@ def random_seq(k, gtr_probs):
     :return: A random string of length k generated using gtr_probs
     '''
     prob_A, prob_C, prob_G, prob_T = gtr_probs # You can use these if it's more convenient
-    # TODO Your code here
-    return ""
+    # IID sequence draw  from pis, for each letter.
+    seq = ""
+
+    for i in range (k):
+        choice = np.random.choice(np.arange(0, 4), p=gtr_probs)
+        if choice == 0:
+            seq = seq + 'A'
+        elif choice == 1:
+            seq = seq + 'C'
+        elif choice == 2:
+            seq = seq + 'G'
+        elif choice == 3:
+            seq = seq + 'T'
+
+
+
+    import pdb; pdb.set_trace()
+    return seq
 
 def evolve(tree, root_seq, gtr_probs, gtr_rates):
     '''
@@ -25,7 +44,66 @@ def evolve(tree, root_seq, gtr_probs, gtr_rates):
     prob_A, prob_C, prob_G, prob_T = gtr_probs # You can use these if it's more convenient
     rate_CT, rate_AT, rate_GT, rate_AC, rate_CG, rate_AG = gtr_rates # You can use these if it's more convenient
     seqs = dict() # This will be your output (keys = leaf labels (str) and values = sequences (str))
-    # TODO Your code here
+
+
+
+    # generate R matrix
+    AA = -(prob_G*rate_AG+ prob_C*rate_AC + prob_T*rate_AT)
+    GG  = -(prob_A*rate_AG+ prob_C*rate_CG + prob_T*rate_GT)
+    CC  = -(prob_A*rate_AC+ prob_G*rate_CG + prob_T*rate_CT)
+    TT = -(prob_A*rate_AT+ prob_G*rate_GT + prob_C*rate_CT)
+    R = np.array([[AA,prob_G*rate_AG, prob_C*rate_AC, prob_T*rate_AT],\
+                  [prob_A*rate_AG,GG, prob_C*rate_CG, prob_T*rate_GT],\
+                    [prob_A*rate_AC, prob_G*rate_CG,CC, prob_T*rate_CT],\
+                    [prob_A*rate_AT, prob_G*rate_GT, prob_C*rate_CT,TT]])
+
+    
+
+    # normalize R matrix
+    d = 0
+    for i in range(len(gtr_probs)):
+         d = d - gtr_probs[i] * R[i][i]
+    row = 0;
+    Rnorm = R/abs(d)
+
+    tot = dict()
+    for node in  tree.traverse_preorder():
+        # set the root_seqence as the root node
+        if node is tree.root:
+            tot[node] = root_seq
+        else:
+            # find length incident and calculate the P matrix for the node
+            t = node.get_edge_length()
+            parentseq = tot[node.get_parent()]
+            P = sp.linalg.expm(t*Rnorm)
+            seq = ""
+            # for each letter, draw a new letter from the distribution
+            for letter in parentseq:
+                if letter == 'A':
+                    row =0
+                elif letter == 'G':
+                    row = 1
+                elif letter == 'C':
+                    row =2
+                elif letter == 'T':
+                    row = 3
+                choice = np.random.choice(np.arange(0, 4), p= P[row])
+                if choice == 0:
+                    seq = seq + 'A'
+                elif choice == 1:
+                    seq = seq + 'C'
+                elif choice == 2:
+                    seq = seq + 'G'
+                elif choice == 3:
+                    seq = seq + 'T'
+            tot[node] = seq
+        
+            if node.is_leaf():
+                seqs[node.get_label()] = seq
+
+
+
+
     return seqs
 
 if __name__ == "__main__":
@@ -71,6 +149,7 @@ if __name__ == "__main__":
     leaves = {leaf.label for leaf in tree.traverse_leaves()}
     for l in leaves:
         if l not in seqs:
+            import pdb; pdb.set_trace()
             raise RuntimeError("No sequence for leaf: %s" % l)
     for l in seqs:
         if l not in leaves:
