@@ -80,9 +80,9 @@ def evolve(tree, root_seq, gtr_probs, gtr_rates):
             for letter in parentseq:
                 if letter == 'A':
                     row =0
-                elif letter == 'G':
-                    row = 1
                 elif letter == 'C':
+                    row = 1
+                elif letter == 'G':
                     row =2
                 elif letter == 'T':
                     row = 3
