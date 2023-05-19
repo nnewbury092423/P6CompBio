@@ -28,8 +28,7 @@ def random_seq(k, gtr_probs):
             seq = seq + 'T'
 
 
-
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()
     return seq
 
 def evolve(tree, root_seq, gtr_probs, gtr_rates):
@@ -49,13 +48,13 @@ def evolve(tree, root_seq, gtr_probs, gtr_rates):
 
     # generate R matrix
     AA = -(prob_G*rate_AG+ prob_C*rate_AC + prob_T*rate_AT)
-    GG  = -(prob_A*rate_AG+ prob_C*rate_CG + prob_T*rate_GT)
     CC  = -(prob_A*rate_AC+ prob_G*rate_CG + prob_T*rate_CT)
+    GG  = -(prob_A*rate_AG+ prob_C*rate_CG + prob_T*rate_GT)
     TT = -(prob_A*rate_AT+ prob_G*rate_GT + prob_C*rate_CT)
-    R = np.array([[AA,prob_G*rate_AG, prob_C*rate_AC, prob_T*rate_AT],\
-                  [prob_A*rate_AG,GG, prob_C*rate_CG, prob_T*rate_GT],\
-                    [prob_A*rate_AC, prob_G*rate_CG,CC, prob_T*rate_CT],\
-                    [prob_A*rate_AT, prob_G*rate_GT, prob_C*rate_CT,TT]])
+    R = np.array([[AA,prob_C*rate_AC, prob_G*rate_AG, prob_T*rate_AT],\
+                  [prob_A*rate_AC,CC, prob_G*rate_CG, prob_T*rate_CT],\
+                    [prob_A*rate_AG, prob_C*rate_CG,GG, prob_T*rate_GT],\
+                    [prob_A*rate_AT, prob_C*rate_CT, prob_G*rate_GT,TT]])
 
     
 
@@ -100,10 +99,6 @@ def evolve(tree, root_seq, gtr_probs, gtr_rates):
         
             if node.is_leaf():
                 seqs[node.get_label()] = seq
-
-
-
-
     return seqs
 
 if __name__ == "__main__":
