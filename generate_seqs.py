@@ -2,6 +2,7 @@
 import numpy as np
 import scipy as sp
 
+
 ERROR_GTR_PARAMS_FILE = "Invalid GTR parameters file"
 ERROR_ROOT_SEQ = "Invalid root sequence. Must be path to FASTA file or integer"
 
@@ -44,7 +45,7 @@ def evolve(tree, root_seq, gtr_probs, gtr_rates):
     rate_CT, rate_AT, rate_GT, rate_AC, rate_CG, rate_AG = gtr_rates # You can use these if it's more convenient
     seqs = dict() # This will be your output (keys = leaf labels (str) and values = sequences (str))
 
-
+    #import pdb; pdb.set_trace()
 
     # generate R matrix
     AA = -(prob_G*rate_AG+ prob_C*rate_AC + prob_T*rate_AT)
